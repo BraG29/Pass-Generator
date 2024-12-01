@@ -16,6 +16,7 @@ explica bastante bien como hacerlo (en mi caso no fue necesario habilitar Google
 Los URL de origen deben ser http://localhost:8085, recomiendo configurarlo de la siguiente manera:
 
 ![](./docs/origin-url.png)
+
 Una vez se tienen el **Client ID** y el **Client Secret**, crear un archivo de nombre `.env` en la raíz del proyecto
 y cargar las credenciales con el siguiente formato:
 ```

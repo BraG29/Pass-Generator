@@ -1,6 +1,6 @@
 # Pass Generator
 
-La siguiente es una aplicación para generar contraseñas. Las mismas son cadenas de caracteres aleatroios que
+La siguiente es una aplicación para generar contraseñas. Las mismas son cadenas de caracteres aleatorios que
 incluyen letras minusculas, mayusculas, números y simbolos. 
 
 Dichas contraseñas se guardan en un archivo `.json` en Google Drive, lo que hace imprescindible iniciar sesión

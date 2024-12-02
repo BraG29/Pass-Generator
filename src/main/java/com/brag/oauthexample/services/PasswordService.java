@@ -33,7 +33,6 @@ public class PasswordService {
     private final SecretKey secretKey;
 
     public PasswordService(Cipher cipher, SecretKey secretKey) {
-        System.out.println("----- EN EL CONSTRUCTOR DEL PASSWORD SERVICE -----");
         this.cipher = cipher;
         this.secretKey = secretKey;
     }
@@ -73,7 +72,6 @@ public class PasswordService {
     }
 
     public String decryptPassword(String encryptedPassword) {
-        System.out.println("Tratando de desencriptar con key: " + getStringKey());
         try {
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             byte[] decryptedPass = cipher.doFinal(Base64.getDecoder().decode(encryptedPassword));

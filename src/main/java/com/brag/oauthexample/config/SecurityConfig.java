@@ -48,7 +48,6 @@ public class SecurityConfig {
     @Bean
     @Scope("prototype")
     public SecretKey getSecretKey() throws Exception {
-        System.out.println("---- BUSCANDO CLAVE SECRETA EN SECURITY CONFIG ----");
         File secretKeyFile = new File(filePath);
 
         Properties properties = new Properties();

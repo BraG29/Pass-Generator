@@ -100,7 +100,6 @@ public class SingleController {
     @GetMapping("/password/{site}")
     public ResponseEntity<String> getPassword(@PathVariable String site){
         site = site.replace("\"", "");
-        System.out.println("Site: " + site);
 
         return ResponseEntity.ok()
                 .body(passwordService.decryptPassword(passwordsMap.get(site)));

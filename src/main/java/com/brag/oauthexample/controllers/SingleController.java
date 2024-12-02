@@ -1,4 +1,5 @@
 package com.brag.oauthexample.controllers;
+import com.brag.oauthexample.config.SecurityConfig;
 import com.brag.oauthexample.models.Form;
 import com.brag.oauthexample.services.GoogleDriveService;
 import com.brag.oauthexample.services.PasswordService;
@@ -26,6 +27,7 @@ public class SingleController {
 
     private final GoogleDriveService googleDriveService;
     private final PasswordService passwordService;
+    private final SecurityConfig securityConfig;
 
     private String userEmail;
 
@@ -37,9 +39,10 @@ public class SingleController {
 
     private final ObjectMapper objectMapper;
 
-    public SingleController(GoogleDriveService driveService, PasswordService passwordService) {
+    public SingleController(GoogleDriveService driveService, PasswordService passwordService, SecurityConfig securityConfig) {
         this.googleDriveService = driveService;
         this.passwordService = passwordService;
+        this.securityConfig = securityConfig;
         this.filesId = new HashMap<>();
         this.objectMapper = new ObjectMapper();
     }
@@ -125,6 +128,17 @@ public class SingleController {
                 .contentType(MediaType.TEXT_PLAIN)
                 .contentLength(fileContentBytes.length)
                 .body(resource);
+    }
+
+    @PostMapping("/change-key")
+    public ResponseEntity<String> changeKey(@RequestBody String key){
+        try {
+            securityConfig.changeKey(key.replace("\"", ""));
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     private void loadModel(Model model){

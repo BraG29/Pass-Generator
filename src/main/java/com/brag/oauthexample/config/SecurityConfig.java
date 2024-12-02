@@ -2,6 +2,7 @@ package com.brag.oauthexample.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,16 +20,15 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Base64;
 import java.util.Properties;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final String filePath = "secrets.properties";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,8 +46,9 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Scope("prototype")
     public SecretKey getSecretKey() throws Exception {
-        String filePath = "secrets.properties";
+        System.out.println("---- BUSCANDO CLAVE SECRETA EN SECURITY CONFIG ----");
         File secretKeyFile = new File(filePath);
 
         Properties properties = new Properties();
@@ -76,5 +77,17 @@ public class SecurityConfig {
                 return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
             }
         }
+    }
+
+    public void changeKey(String secretKey) throws Exception{
+        Properties properties = new Properties();
+        properties.setProperty("key", secretKey);
+
+        try(FileOutputStream secretKeyFileOutput = new FileOutputStream(filePath)) {
+            properties.store(secretKeyFileOutput,
+                    "Clave para desencriptar tus contraseñas: NO LA MUESTRES NI LA PIERDAS");
+
+        }
+
     }
 }

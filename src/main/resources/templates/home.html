@@ -87,7 +87,21 @@
         </div>
 
     </div>
+
+    <div class="row" >
+        <div class="col">
+            <div class="input-group position-fixed bottom-50 w-50">
+                <input class="form-control"
+                        type="text"
+                        placeholder="Cambiar Clave Secreta"
+                        id="secretKey">
+                <button type="button" class="btn btn-primary" id="changeSecretKey">Ok</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -143,9 +157,9 @@
 
         navigator.clipboard.writeText(password)
             .then(() => {
-                appendAlert('Contraseña copiada al portapapeles', 'success')
+                appendAlert('Contraseña copiada al portapapeles', 'success');
             })
-            .catch(err => appendAlert(`Error al copiar el texto: ${err}`, 'danger'))
+            .catch(err => appendAlert(`Error al copiar el texto: ${err}`, 'danger'));
     });
 
 
@@ -211,8 +225,32 @@
             button.disabled = false;
 
         })
-    })
-</script>
+    });
 
+    document.getElementById("changeSecretKey").addEventListener('click', () => {
+        const key = document.getElementById("secretKey").value;
+        const button = document.getElementById("changeSecretKey");
+        
+        button.disabled = true;
+
+        fetch("/change-key", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(key),
+            credentials: 'include'
+        })
+        .then(() => {
+            appendAlert('Clave Secreta cambiada con exito', 'success')
+        })
+        .catch(err => {
+            appendAlert(`Ha habido un error al tratar de cambiar la Clave Secreta\n ${err}`, 'danger')
+        })
+        .finally(() => {
+            button.disabled = false;
+        })
+    });
+</script>
 </body>
 </html>

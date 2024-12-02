@@ -1,5 +1,7 @@
 package com.brag.oauthexample.services;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -7,6 +9,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
+import java.io.Console;
 import java.security.InvalidKeyException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -15,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class PasswordService {
 
     private final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
@@ -29,6 +33,7 @@ public class PasswordService {
     private final SecretKey secretKey;
 
     public PasswordService(Cipher cipher, SecretKey secretKey) {
+        System.out.println("----- EN EL CONSTRUCTOR DEL PASSWORD SERVICE -----");
         this.cipher = cipher;
         this.secretKey = secretKey;
     }
@@ -68,6 +73,7 @@ public class PasswordService {
     }
 
     public String decryptPassword(String encryptedPassword) {
+        System.out.println("Tratando de desencriptar con key: " + getStringKey());
         try {
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             byte[] decryptedPass = cipher.doFinal(Base64.getDecoder().decode(encryptedPassword));

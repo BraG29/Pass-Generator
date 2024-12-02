@@ -35,4 +35,4 @@ especificados para conseguir la credenciales y ver la siguiente pagina:
 
 ## TODO List
 * Manejo de errores en el backend y una buena pagina de error
-* Funcionalidad para cargar un secret key ya existente
+* ~~Funcionalidad para cargar un secret key ya existente~~

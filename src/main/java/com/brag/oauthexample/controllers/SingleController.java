@@ -105,17 +105,32 @@ public class SingleController {
                 .body(passwordService.decryptPassword(passwordsMap.get(site)));
     }
 
-    @GetMapping("/download")
-    public ResponseEntity<Resource> downloadPasswords(){
+    @GetMapping("/download/{args}")
+    public ResponseEntity<Resource> downloadPasswords(@PathVariable String args){
+
+        args = args.replace("\"", "").toUpperCase();
 
         StringBuilder fileContentBuilder = new StringBuilder()
-                .append(String.format("Contraseñas guardadas en el drive de %s\nTu clave secreta es: %s\n",
-                        userEmail, passwordService.getStringKey()));
+                .append(String.format("Contraseñas guardadas en el drive de %s\n", userEmail));
 
-        for(Map.Entry<String, String> entry : passwordsMap.entrySet()){
-            String decryptedPass = passwordService.decryptPassword(entry.getValue());
-            fileContentBuilder.append(String.format("%s: %s\n", entry.getKey(), decryptedPass));
+        switch (args){
+            case "ALL":
+                appendKey(fileContentBuilder);
+                appendPasswords(fileContentBuilder);
+                break;
+
+            case "KEY":
+                appendKey(fileContentBuilder);
+                break;
+
+            case "PASSWORDS":
+                appendPasswords(fileContentBuilder);
+                break;
+
+            default:
+                return ResponseEntity.notFound().build();
         }
+
 
         byte[] fileContentBytes = fileContentBuilder.toString()
                 .getBytes(StandardCharsets.UTF_8);
@@ -127,6 +142,26 @@ public class SingleController {
                 .contentType(MediaType.TEXT_PLAIN)
                 .contentLength(fileContentBytes.length)
                 .body(resource);
+    }
+
+    private void appendKey(StringBuilder stringBuilder){
+        stringBuilder.append(String.format("Encriptadas mediante algoritmo AES con clave secreta: %s\n",
+                passwordService.getStringKey()));
+    }
+
+    private void appendPasswords(StringBuilder stringBuilder){
+        String splitter = "=".repeat(100);
+
+        stringBuilder.append(String.format("%s\n", splitter));
+        stringBuilder.append("Contraseñas:\n");
+
+        for(Map.Entry<String, String> entry : passwordsMap.entrySet()){
+
+            String decryptedPass = passwordService.decryptPassword(entry.getValue());
+            stringBuilder.append(String.format("%s: %s\n", entry.getKey(), decryptedPass));
+        }
+
+        stringBuilder.append(String.format("%s\n", splitter));
     }
 
     @PostMapping("/change-key")

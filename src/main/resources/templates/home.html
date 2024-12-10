@@ -66,16 +66,28 @@
                     </button>
                 </div>
             </div>
-            <div class="col">
-                <a href="download" class="btn btn-success">
+            <div class="col-auto form-check">
+                <button type="button" class="btn btn-success" id="download">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-download" viewBox="0 0 16 16">
                         <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
                         <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
                     </svg>
-                    Descargar Archivo con Contraseñas
-                </a>
+                    Descargar Archivo
+                </button>
             </div>
+            
+            <div class="col-auto">
+                <input class="form-check-input" type="checkbox" value="" id="with-password">
+                <label class="form-check-label" for="with-password">
+                    Contraseñas
+                </label>
+
+                <input class="form-check-input" type="checkbox" value="" id="with-key">
+                <label class="form-check-label" for="with-key">
+                    Clave Secreta
+                </label>
+        </div>
         </div>
 
         <div class="row">
@@ -242,15 +254,49 @@
             credentials: 'include'
         })
         .then(() => {
-            appendAlert('Clave Secreta cambiada con exito', 'success')
+            appendAlert('Clave Secreta cambiada con exito', 'success');
         })
         .catch(err => {
-            appendAlert(`Ha habido un error al tratar de cambiar la Clave Secreta\n ${err}`, 'danger')
+            appendAlert(`Ha habido un error al tratar de cambiar la Clave Secreta\n ${err}`, 'danger');
         })
         .finally(() => {
             button.disabled = false;
         })
     });
+
+    document.getElementById("download").addEventListener('click', async () => {
+        const passwordsCheckBox = document.getElementById('with-password')
+        const keyCheckBox = document.getElementById('with-key')
+
+        if(!passwordsCheckBox.checked && !keyCheckBox.checked){
+            appendAlert(`Debe elegir al menos una de las opciones de la derecha`, 'danger');
+        }
+        else {
+            let args = "ALL";
+            const filename = "pass-generator.txt";
+
+            if (!passwordsCheckBox.checked) args = "KEY";
+            if (!keyCheckBox.checked) args = "PASSWORDS";
+
+            try{
+                const response = await fetch(`/download/${args}`);
+
+                if(!response.ok) appendAlert('Error al descargar el archivo', 'danger');
+
+                const blob = await response.blob();
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+
+                // Liberar recursos
+                URL.revokeObjectURL(link.href);
+            }catch (error){
+                console.error(`El navegador no esta pudiendo descargar el archivo\n. Error: ${error}`);
+            }
+        }
+    });
+
 </script>
 </body>
 </html>

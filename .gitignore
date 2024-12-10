@@ -135,6 +135,7 @@ buildNumber.properties
 .classpath
 
 # Secrets
+src/main/resources/application-dev.properties
 secrets.properties
 .env
 
